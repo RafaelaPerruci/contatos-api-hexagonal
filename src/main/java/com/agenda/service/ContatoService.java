@@ -1,12 +1,12 @@
 package com.agenda.service;
 
-import com.agenda.dto.ContatoRequestDTO;
+import com.agenda.domain.ContatoDomain;
 import com.agenda.dto.ContatoResponseDTO;
 import com.agenda.entity.Contato;
 import com.agenda.exception.DuplicateResourceException;
 import com.agenda.exception.ResourceNotFoundException;
+import com.agenda.mapper.ContatoMapper;
 import com.agenda.repository.ContatoRepository;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,27 +17,26 @@ import java.util.List;
 public class ContatoService {
 
     private final ContatoRepository contatoRepository;
+    private final  ContatoMapper mapper;
 
-    public ContatoResponseDTO create(ContatoRequestDTO contato) {
-        Contato c = new Contato(contato);
-        boolean emailJaExiste = contatoRepository.existsByEmail(c.getEmail());
+    public ContatoResponseDTO create(ContatoDomain contato) {
+        boolean emailJaExiste = contatoRepository.existsByEmail(contato.getEmail());
         if (emailJaExiste) {
-            throw new DuplicateResourceException("Contato", "email", c.getEmail());
+            throw new DuplicateResourceException("Contato", "email", contato.getEmail());
         }
-        Contato salvo = contatoRepository.save(c);
+        Contato salvo = contatoRepository.save(mapper.toEntity(contato));
         return new ContatoResponseDTO(
                 salvo.getId(),
                 salvo.getNome(),
                 salvo.getTelefone(),
-                salvo.getEmail()
-        );
+                salvo.getEmail());
 
     }
 
-
     public List<ContatoResponseDTO> findAll() {
         List<Contato> contatos = contatoRepository.findAll();
-        List<ContatoResponseDTO> responseDtos = contatos.stream().map(contato -> new ContatoResponseDTO(contato) ).toList();
+        List<ContatoResponseDTO> responseDtos = contatos.stream().map(contato -> new ContatoResponseDTO(contato))
+                .toList();
         return responseDtos;
     }
 
@@ -46,17 +45,18 @@ public class ContatoService {
         contatoRepository.deleteById(id);
     }
 
-    public ContatoResponseDTO update(Long id, ContatoRequestDTO contato) {
-        Contato contatoAtualizado = contatoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Contato", id.toString()));
-        contatoAtualizado.setNome(contato.nome());
-        contatoAtualizado.setTelefone(contato.telefone());
-        contatoAtualizado.setEmail(contato.email());
-        contatoAtualizado.setEndereco(contato.endereco());
-        contatoAtualizado.setIdade(contato.idade());
-        contatoAtualizado.setTipo(contato.tipo());
-        contatoAtualizado.setDataCadastro(contato.dataCadastro().toString());
-        contatoAtualizado.setAtivo(contato.ativo());
-        Contato atualizado = contatoRepository.save(contatoAtualizado);
+    public ContatoResponseDTO update(Long id, ContatoDomain contato) {
+        Contato entity = contatoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Contato", id.toString()));
+        entity.setNome(contato.getNome());
+        entity.setTelefone(contato.getTelefone());
+        entity.setEmail(contato.getEmail());
+        entity.setEndereco(contato.getEndereco());
+        entity.setIdade(contato.getIdade());
+        entity.setTipo(contato.getTipo());
+        entity.setDataCadastro(contato.getDataCadastro());
+        entity.setAtivo(contato.getAtivo());
+        Contato atualizado = contatoRepository.save(entity);
         return new ContatoResponseDTO(atualizado);
     }
 }

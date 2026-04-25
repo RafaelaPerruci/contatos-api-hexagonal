@@ -1,6 +1,5 @@
 package com.agenda.entity;
 
-import com.agenda.dto.ContatoRequestDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,7 +22,6 @@ public class Contato {
 
     private String telefone;
 
-
     private String email;
 
     private String endereco;
@@ -36,14 +34,5 @@ public class Contato {
 
     private String ativo;
 
-    public Contato(ContatoRequestDTO contato) {
-        this.nome = contato.nome();
-        this.telefone = contato.telefone();
-        this.email = contato.email();
-        this.endereco = contato.endereco();
-        this.idade = contato.idade();
-        this.tipo = contato.tipo();
-        this.dataCadastro = contato.dataCadastro().toString();
-        this.ativo = contato.ativo();
-    }
+
 }

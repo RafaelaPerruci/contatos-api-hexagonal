@@ -1,8 +1,9 @@
 package com.agenda.controller;
 
+import com.agenda.domain.ContatoDomain;
 import com.agenda.dto.ContatoRequestDTO;
 import com.agenda.dto.ContatoResponseDTO;
-import com.agenda.entity.Contato;
+import com.agenda.mapper.ContatoMapper;
 import com.agenda.service.ContatoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,15 +17,15 @@ import java.util.*;
 @RequiredArgsConstructor
 public class ContatoController {
 
-
     private final ContatoService service;
+    private final ContatoMapper mapper;
     public static List<String> logs = new ArrayList<>();
 
     public static int cont = 0;
 
     @PostMapping("/incluir")
     public ResponseEntity<ContatoResponseDTO> incluir(@RequestBody @Valid ContatoRequestDTO contato) {
-        ContatoResponseDTO responseDTO = service.create(contato);
+        ContatoResponseDTO responseDTO = service.create(mapper.toDomain(contato));
         return ResponseEntity.ok(responseDTO);
     }
 
@@ -34,15 +35,16 @@ public class ContatoController {
 
     }
 
-//    @GetMapping("/pesquisar")
-//    public ResponseEntity<String> pesquisar(@RequestParam String tipoBusca, @RequestParam String valor) {
-//
-//    }
-
+    // @GetMapping("/pesquisar")
+    // public ResponseEntity<String> pesquisar(@RequestParam String tipoBusca,
+    // @RequestParam String valor) {
+    //
+    // }
 
     @PutMapping("/editar/{id}")
-    public ResponseEntity<ContatoResponseDTO> editar(@PathVariable Long id, @RequestBody ContatoRequestDTO contato) {
-        ContatoResponseDTO responseDTO = service.update(id, contato);
+    public ResponseEntity<ContatoResponseDTO> editar(@PathVariable Long id, @RequestBody @Valid ContatoRequestDTO contato) {
+        ContatoDomain domain = mapper.toDomain(contato);
+        ContatoResponseDTO responseDTO = service.update(id, domain);
         return ResponseEntity.ok(responseDTO);
     }
 
