@@ -33,6 +33,12 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage(), List.of()));
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<?> handle400IllegalArgument(IllegalArgumentException ex) {
+        return ResponseEntity.badRequest()
+                .body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), List.of()));
+    }
+
 
 
     private record ErrorResponse(int status, String mensagem, List<ErrorField> erros) {}

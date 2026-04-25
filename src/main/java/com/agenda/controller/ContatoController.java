@@ -35,11 +35,12 @@ public class ContatoController {
 
     }
 
-    // @GetMapping("/pesquisar")
-    // public ResponseEntity<String> pesquisar(@RequestParam String tipoBusca,
-    // @RequestParam String valor) {
-    //
-    // }
+     @GetMapping("/pesquisar")
+     public ResponseEntity<List<ContatoResponseDTO>> pesquisar(@RequestParam String tipoBusca, @RequestParam String valor) {
+         List<ContatoResponseDTO> dtos = service.searchContact(tipoBusca, valor);
+         return ResponseEntity.ok(dtos);
+
+     }
 
     @PutMapping("/editar/{id}")
     public ResponseEntity<ContatoResponseDTO> editar(@PathVariable Long id, @RequestBody @Valid ContatoRequestDTO contato) {

@@ -15,7 +15,7 @@ public class ContatoDomain {
 
     private final String endereco;
 
-    private final int idade;
+    private final Integer idade;
 
     private final String tipo;
 

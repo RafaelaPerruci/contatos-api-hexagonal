@@ -8,9 +8,6 @@ import org.springframework.stereotype.Component;
 @Component
 public final class ContatoMapper {
 
-    private ContatoMapper() {
-    }
-
     public ContatoDomain toDomain(ContatoRequestDTO dto) {
         return new ContatoDomain(
                 dto.nome(),

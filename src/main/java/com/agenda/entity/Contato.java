@@ -26,7 +26,7 @@ public class Contato {
 
     private String endereco;
 
-    private int idade;
+    private Integer idade;
 
     private String tipo;
 
