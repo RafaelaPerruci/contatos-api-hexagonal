@@ -114,4 +114,8 @@ public class ContatoService {
         Example<Contato> example = Example.of(probe, matcher);
         return contatoRepository.findAll(example).stream().map(ContatoResponseDTO::new).toList();
     }
+
+    public long findCount() {
+        return contatoRepository.count();
+    }
 }

@@ -19,9 +19,6 @@ public class ContatoController {
 
     private final ContatoService service;
     private final ContatoMapper mapper;
-    public static List<String> logs = new ArrayList<>();
-
-    public static int cont = 0;
 
     @PostMapping("/incluir")
     public ResponseEntity<ContatoResponseDTO> incluir(@RequestBody @Valid ContatoRequestDTO contato) {
@@ -57,11 +54,7 @@ public class ContatoController {
 
     @GetMapping("/logs")
     public ResponseEntity<String> verLogs() {
-        String s = "=== LOGS ===\n";
-        s = s + "Total operacoes: " + cont + "\n\n";
-        for (int i = 0; i < logs.size(); i++) {
-            s = s + logs.get(i) + "\n";
-        }
-        return ResponseEntity.ok(s);
+        long totalOperacoes = service.findCount();
+        return ResponseEntity.ok("Total operacoes: " + totalOperacoes);
     }
 }
