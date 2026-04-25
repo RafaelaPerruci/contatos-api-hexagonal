@@ -1,0 +1,7 @@
+** Aplicação AgendaApplication
+
+- Camada de Data Transfer Object inexistente no contrato 
+- Camada de Serviço de Contatos inexistente para manipulação de dados e regras de negócio
+- Todas as operações de CRUD presentes no controller
+- Todas as classes de responsabilidades diferentes estão presentes dentro do mesmo pacote (Sem arquitetura)
+- Serviço de validação inexistente 
