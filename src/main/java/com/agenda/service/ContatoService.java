@@ -3,6 +3,7 @@ package com.agenda.service;
 import com.agenda.domain.ContatoDomain;
 import com.agenda.dto.ContatoResponseDTO;
 import com.agenda.entity.Contato;
+import com.agenda.enums.ContatoTipo;
 import com.agenda.exception.DuplicateResourceException;
 import com.agenda.exception.ResourceNotFoundException;
 import com.agenda.mapper.ContatoMapper;
@@ -93,13 +94,20 @@ public class ContatoService {
             matcher = ExampleMatcher.matching()
                     .withIgnoreNullValues()
                     .withMatcher("idade", ExampleMatcher.GenericPropertyMatchers.exact());
+        } else if ("tipo".equals(campo)) {
+            try {
+                probe.setTipo(ContatoTipo.valueOf(valor.trim().toUpperCase()));
+            } catch (IllegalArgumentException ex) {
+                throw new IllegalArgumentException("Tipo de contato invalido: " + valor);
+            }
+
+            matcher = ExampleMatcher.matching().withIgnoreNullValues();
         } else {
             switch (campo) {
                 case "nome" -> probe.setNome(valor.trim());
                 case "telefone" -> probe.setTelefone(valor.trim());
                 case "email" -> probe.setEmail(valor.trim());
                 case "endereco" -> probe.setEndereco(valor.trim());
-                case "tipo" -> probe.setTipo(valor.trim());
                 case "dataCadastro" -> probe.setDataCadastro(valor.trim());
                 case "ativo" -> probe.setAtivo(valor.trim());
                 default -> throw new IllegalArgumentException("Campo de busca invalido: " + campo);

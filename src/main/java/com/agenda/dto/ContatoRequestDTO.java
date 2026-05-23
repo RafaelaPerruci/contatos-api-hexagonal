@@ -1,5 +1,6 @@
 package com.agenda.dto;
 
+import com.agenda.enums.ContatoTipo;
 import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
@@ -25,8 +26,8 @@ public record ContatoRequestDTO(
         @Max(150)
         Integer idade,
 
-        @NotBlank(message = "Tipo obrigatorio")
-        String tipo,
+        @NotNull(message = "Tipo obrigatorio")
+        ContatoTipo tipo,
 
         @NotNull
         LocalDate dataCadastro,

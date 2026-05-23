@@ -1,5 +1,6 @@
 package com.agenda.domain;
 
+import com.agenda.enums.ContatoTipo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -17,7 +18,7 @@ public class ContatoDomain {
 
     private final Integer idade;
 
-    private final String tipo;
+    private final ContatoTipo tipo;
 
     private final String dataCadastro;
 

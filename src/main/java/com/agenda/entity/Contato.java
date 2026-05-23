@@ -1,5 +1,6 @@
 package com.agenda.entity;
 
+import com.agenda.enums.ContatoTipo;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,7 +29,8 @@ public class Contato {
 
     private Integer idade;
 
-    private String tipo;
+    @Enumerated(EnumType.STRING)
+    private ContatoTipo tipo;
 
     private String dataCadastro;
 
