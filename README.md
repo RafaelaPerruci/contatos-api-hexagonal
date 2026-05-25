@@ -1,83 +1,128 @@
-# Agenda de Contatos — Código Didático (PROPOSITALMENTE RUIM)
+# Agenda de Contatos
 
-Aplicação REST em **Spring Boot + Java 21** para gerenciamento de contatos, construída no padrão MVC mas **intencionalmente violando SOLID e Clean Code**. Serve como material didático para exercícios de refatoração.
+API REST em **Spring Boot 3 + Java 21** para gerenciamento de contatos, construída com arquitetura em camadas, validação declarativa e busca genérica via Spring Data `Example`.
+
+## Tecnologias
+
+| Tecnologia | Versão |
+|---|---|
+| Java | 21 |
+| Spring Boot | 3.3.4 |
+| Spring Data JPA | — |
+| H2 (banco em memória) | — |
+| Bean Validation (Jakarta) | — |
+| Lombok | — |
+| Maven | 3.6+ |
+
+## Arquitetura
+
+```
+controller  →  service  →  repository
+    ↕              ↕
+  DTOs          Domain / Entity
+    ↕
+  Mapper
+```
+
+| Camada | Responsabilidade |
+|---|---|
+| `ContatoController` | Recebe requisições HTTP, delega ao serviço |
+| `ContatoService` | Regras de negócio: criação, busca, atualização, remoção |
+| `ContatoRepository` | Acesso ao banco via Spring Data JPA |
+| `ContatoMapper` | Converte entre `ContatoRequestDTO` ↔ `ContatoDomain` ↔ `Contato` |
+| `GlobalExceptionHandler` | Tratamento centralizado de erros (`@RestControllerAdvice`) |
 
 ## Como executar
+
+**Pré-requisitos:** Java 21+ e Maven 3.6+
 
 ```bash
 mvn spring-boot:run
 ```
 
-A aplicação sobe em `http://localhost:8080` com banco H2 em memória (console em `/h2`).
+- Aplicação: `http://localhost:8080`
+- Console H2: `http://localhost:8080/h2`
 
 ## Endpoints
 
 | Método | URL | Descrição |
-|--------|------|-----------|
-| POST   | `/contatos/incluir` | Inclui um contato (JSON no body) |
-| GET    | `/contatos/listar` | Lista todos |
-| GET    | `/contatos/pesquisar?tipoBusca=nome&valor=joao` | Pesquisa (tipos: `nome`, `email`, `tel`, `tipo`, `id`) |
-| PUT    | `/contatos/editar/{id}` | Edita um contato |
-| DELETE | `/contatos/excluir/{id}` | Exclui um contato |
-| GET    | `/contatos/logs` | Mostra o "log" interno |
+|--------|-----|-----------|
+| `POST` | `/contatos/incluir` | Cria um novo contato |
+| `GET` | `/contatos/listar` | Lista todos os contatos |
+| `GET` | `/contatos/pesquisar?tipoBusca=<campo>&valor=<valor>` | Pesquisa por campo |
+| `PUT` | `/contatos/editar/{id}` | Atualiza um contato existente |
+| `DELETE` | `/contatos/excluir/{id}` | Remove um contato |
+| `GET` | `/contatos/logs` | Retorna o total de contatos cadastrados |
 
-### Exemplo de JSON para `POST /contatos/incluir`
+### POST `/contatos/incluir`
 
 ```json
 {
   "nome": "Maria Silva",
-  "tel": "11999998888",
+  "telefone": "11999998888",
   "email": "maria@exemplo.com",
-  "end": "Rua A, 100",
+  "endereco": "Rua A, 100",
   "idade": 30,
-  "tipo": "AMIGO"
+  "tipo": "AMIGO",
+  "dataCadastro": "2026-05-24",
+  "ativo": "S"
 }
 ```
 
-Tipos permitidos: `FAMILIA`, `AMIGO`, `TRABALHO`, `OUTRO`.
+**Resposta (`200 OK`):**
 
----
+```json
+{
+  "id": 1,
+  "nome": "Maria Silva",
+  "telefone": "11999998888",
+  "email": "maria@exemplo.com"
+}
+```
 
-## Problemas propositais (para o exercício de refatoração)
+### GET `/contatos/pesquisar`
 
-### Violações de SOLID
+Campos aceitos em `tipoBusca`:
 
-- **SRP (Single Responsibility)** — [ContatoController.java](src/main/java/com/agenda/ContatoController.java) faz validação, acesso a dados, regras de negócio, formatação da resposta, logging e "envio de email". [Contato.java](src/main/java/com/agenda/Contato.java) é entidade + validador + formatador.
-- **OCP (Open/Closed)** — o método `pesquisar` usa uma cadeia `if/else` por tipo de busca; para adicionar um novo critério é preciso editar o método.
-- **LSP (Liskov)** — não há hierarquia; ponto a introduzir em uma etapa posterior (ex.: tipos de contato polimórficos).
-- **ISP (Interface Segregation)** — nenhuma interface de serviço — tudo é classe concreta.
-- **DIP (Dependency Inversion)** — o controller depende diretamente do repositório concreto; não há camada de serviço nem abstrações.
+| Campo | Tipo de correspondência |
+|---|---|
+| `nome` | Contém (case-insensitive) |
+| `telefone` | Contém |
+| `email` | Contém |
+| `endereco` | Contém |
+| `tipo` | Contém (ex.: `AMIGO`, `FAMILIA`, `TRABALHO`, `OUTRO`) |
+| `dataCadastro` | Contém |
+| `ativo` | Contém (ex.: `S`, `N`) |
+| `idade` | Exato (numérico) |
 
-### Violações de Clean Code
+**Exemplos:**
 
-- Nomes ruins e abreviados: `c`, `ct`, `tel`, `end`, `cont`, `op`, `s`, `resp`.
-- Campos `public` na entidade (sem encapsulamento).
-- Mistura de idiomas (português/inglês).
-- Métodos gigantes com muitas responsabilidades (`incluir` tem validação, persistência, email, log e formatação).
-- Código duplicado (formatação de saída repetida em `listar`, `pesquisar` e `editar`).
-- Magic strings espalhadas (`"FAMILIA"`, `"S"`, `"N"`, `"AMIGO"`...).
-- Datas armazenadas como `String`.
-- Flag `ativo` como `"S"`/`"N"` em vez de `boolean`.
-- Estado estático no controller (`logs`, `cont`, `init`).
-- `catch (Exception e)` genérico engolindo tudo.
-- Respostas como `String` concatenada em vez de DTOs/JSON.
-- Regras de negócio no controller (ex.: "não pode excluir FAMILIA").
-- Comentários redundantes que explicam o óbvio.
-- Sem DTOs — a entidade JPA é exposta diretamente na API.
-- Sem tratamento de exceções centralizado (`@ControllerAdvice`).
-- Sem validação declarativa (Bean Validation) — tudo com `if`.
+```
+GET /contatos/pesquisar?tipoBusca=nome&valor=maria
+GET /contatos/pesquisar?tipoBusca=tipo&valor=AMIGO
+GET /contatos/pesquisar?tipoBusca=idade&valor=30
+```
 
----
+## Validações
 
-## Roteiro sugerido de refatoração
+O `ContatoRequestDTO` aplica as seguintes regras via Bean Validation:
 
-1. Separar em camadas: `controller` → `service` → `repository`.
-2. Criar DTOs de entrada e saída (`ContatoRequest`, `ContatoResponse`).
-3. Adotar Bean Validation (`@NotBlank`, `@Email`, `@Min`, `@Max`) e um `@ControllerAdvice`.
-4. Transformar `tipo` em `enum`, `ativo` em `boolean` e `dataCad` em `LocalDateTime`.
-5. Encapsular a entidade (campos `private` + construtor/builder).
-6. Extrair formatação de saída para a camada de apresentação (ou usar JSON direto).
-7. Substituir o `if/else` de `pesquisar` por Strategy ou por Specifications do Spring Data.
-8. Extrair regras de negócio (ex.: proibição de excluir FAMILIA) para o serviço.
-9. Substituir logs manuais por `Logger` (SLF4J).
-10. Escrever testes unitários e de integração por camada.
+| Campo | Regra |
+|---|---|
+| `nome` | Obrigatório, mínimo 3 caracteres |
+| `telefone` | Obrigatório |
+| `email` | Obrigatório, formato de e-mail válido |
+| `endereco` | Obrigatório |
+| `idade` | Obrigatório, entre 1 e 150 |
+| `tipo` | Obrigatório |
+| `dataCadastro` | Obrigatório (`LocalDate`) |
+| `ativo` | Obrigatório |
+
+## Erros
+
+| Código | Situação |
+|---|---|
+| `400 Bad Request` | Validação falhou ou parâmetros inválidos |
+| `404 Not Found` | Contato não encontrado pelo `id` |
+| `409 Conflict` | E-mail já cadastrado |
+| `204 No Content` | Exclusão realizada com sucesso |
