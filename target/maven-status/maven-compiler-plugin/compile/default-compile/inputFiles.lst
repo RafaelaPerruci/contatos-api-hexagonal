@@ -1,0 +1,17 @@
+C:\contatos-hexagonal\src\main\java\com\agenda\adapters\input\rest\controller\ContatoController.java
+C:\contatos-hexagonal\src\main\java\com\agenda\adapters\input\rest\dto\ContatoRequestDTO.java
+C:\contatos-hexagonal\src\main\java\com\agenda\adapters\input\rest\dto\ContatoResponseDTO.java
+C:\contatos-hexagonal\src\main\java\com\agenda\adapters\input\rest\mapper\ContatoRestMapper.java
+C:\contatos-hexagonal\src\main\java\com\agenda\adapters\output\persistence\ContatoJpaRepository.java
+C:\contatos-hexagonal\src\main\java\com\agenda\adapters\output\persistence\ContatoJpaRepositoryAdapter.java
+C:\contatos-hexagonal\src\main\java\com\agenda\adapters\output\persistence\entity\ContatoEntity.java
+C:\contatos-hexagonal\src\main\java\com\agenda\adapters\output\persistence\mapper\ContatoPersistenceMapper.java
+C:\contatos-hexagonal\src\main\java\com\agenda\AgendaApplication.java
+C:\contatos-hexagonal\src\main\java\com\agenda\application\domain\Contato.java
+C:\contatos-hexagonal\src\main\java\com\agenda\application\domain\ContatoDomain.java
+C:\contatos-hexagonal\src\main\java\com\agenda\application\domain\ContatoTipo.java
+C:\contatos-hexagonal\src\main\java\com\agenda\application\port\in\ContatoUseCase.java
+C:\contatos-hexagonal\src\main\java\com\agenda\application\port\out\ContatoRepositoryPort.java
+C:\contatos-hexagonal\src\main\java\com\agenda\infrastructure\exception\DuplicateResourceException.java
+C:\contatos-hexagonal\src\main\java\com\agenda\infrastructure\exception\GlobalExceptionHandler.java
+C:\contatos-hexagonal\src\main\java\com\agenda\infrastructure\exception\ResourceNotFoundException.java
